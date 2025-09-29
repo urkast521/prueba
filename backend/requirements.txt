@@ -1,0 +1,8 @@
+Flask==2.3.3
+Flask-SQLAlchemy==3.1.1
+PyMySQL==1.1.0
+Flask-JWT-Extended
+python-dotenv
+Flask-Cors
+SQLAlchemy
+
