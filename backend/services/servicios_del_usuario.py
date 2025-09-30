@@ -1,6 +1,7 @@
 from flask import jsonify, make_response
 from sqlalchemy import text
 from flask_jwt_extended import create_access_token
+from services.hashing_passwords import hash_password, comparar_password
 
 
 
@@ -13,6 +14,11 @@ def insertar_usuario(db, datos):
                 "success": False,
                 "message": f"Falta el campo requerido: '{validacion}'."
             }), 400)
+        
+    # hashear la contraseña ingresada
+    hashed_password = hash_password(datos['passw'])
+    # sustituir el valor de passw por el valor hasheado
+    datos['passw']= hashed_password
     # Si todas las validaciones pasan, se procede a insertar el usuario
     try:
         query = text("""
@@ -40,13 +46,13 @@ def consultar_usuarios(db, params=None):
         # Si se proporciona un nombre o id, busca por nombre o id, si no, devuelve todos
         if params:
             if 'id' in params:
-                query = text("SELECT * FROM usuarios WHERE id = :id")
+                query = text("SELECT id, nombre, correo, estado FROM usuarios WHERE id = :id")
                 resultado = db.session.execute(query, {"id": params['id']})
             elif 'nombre' in params:
-                query = text("SELECT * FROM usuarios WHERE nombre = :nombre")
+                query = text("SELECT id, nombre, correo, estado FROM usuarios WHERE nombre = :nombre")
                 resultado = db.session.execute(query, {"nombre": params['nombre']})
         else:
-            query = text("SELECT * FROM usuarios")
+            query = text("SELECT id, nombre, correo, estado FROM usuarios")
             resultado = db.session.execute(query)
             
         usuarios = [dict(row) for row in resultado.mappings().all()]
@@ -79,6 +85,11 @@ def modificar_usuario(db, id, datos):
         for key, value in datos.items():
             set_clauses.append(f"{key} = :{key}")
             params[key] = value
+            if key == 'passw':
+                # hashear la contraseña ingresada
+                hashed_password = hash_password(value)
+                # sustituir el valor de passw por el valor hasheado
+                params[key]= hashed_password
 
         params['id'] = id
         query = text(f"UPDATE usuarios SET {', '.join(set_clauses)} WHERE id = :id")
@@ -119,17 +130,17 @@ def desactivar_usuario(db, id):
 
 def login_usuario(db, datos):
     correo = datos.get("correo")
-    passw = datos.get("passw")
+    passw_sin_hash = datos.get("passw")
 
     #Validar que se proporcionen correo y contraseña
-    if not correo or not passw:
+    if not correo or not passw_sin_hash:
         return jsonify({"success": False, "error": "Correo y contraseña son obligatorios"}), 400
 
     #Si se proporcionan, se procede a verificar las credenciales
     try:
         #Consultar el usuario en la base de datos según el correo y la contraseña
-        query = text("SELECT * FROM usuarios WHERE correo = :correo AND passw = :passw")
-        resultado = db.session.execute(query, {"correo": correo, "passw": passw})
+        query = text("SELECT * FROM usuarios WHERE correo = :correo")
+        resultado = db.session.execute(query, {"correo": correo})
         usuario = resultado.mappings().first()
         #Si no se encuentra el usuario, retornar error
         if not usuario:
@@ -139,6 +150,14 @@ def login_usuario(db, datos):
         if usuario["estado"] != 1:
             return jsonify({"success": False, "error": "Tu cuenta está desactivada"}), 403
         
+        #Obtener hash
+        passw_con_hash=usuario["passw"]
+        #Comparar hash con password
+        if not comparar_password(passw_sin_hash, passw_con_hash):
+            return jsonify({"success": False, "error": "Credenciales inválidas"}), 401
+        
+
+        #Si todo salio bien,  seguimos adelante
         #Generar token
         token_de_acceso = create_access_token(
             identity=str(usuario["id"]),

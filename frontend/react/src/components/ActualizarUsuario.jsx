@@ -7,7 +7,8 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
   const [error, setError] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [showPass, setShowPass] = useState(false);
-
+  const [nuevaPass, setNuevaPass]= useState(null);
+  const [confirmarPass, setConfirmarPass]= useState(null);
   //Obtener datos del usuario al cargar el componente, vinculado al id recibido por props
   useEffect(() => {
     //Validar que el id sea válido
@@ -39,7 +40,7 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     //Validar campos vacíos
-    if (!usuario.nombre || !usuario.correo || !usuario.passw) {
+    if (!usuario.nombre || !usuario.correo || !nuevaPass || !confirmarPass) {
       setMensaje("Todos los campos son obligatorios");
       return;
     }
@@ -47,12 +48,22 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
     if (
       typeof usuario.nombre !== "string" ||
       typeof usuario.correo !== "string" ||
-      typeof usuario.passw !== "string"
+      typeof nuevaPass !== "string" ||
+      typeof confirmarPass !== "string" 
     ) {
       setMensaje("Los campos deben ser de tipo texto");
       return;
     }
-
+    //Validamos que la contraseña nueva y la confirmacion sean iguales
+    if (!(nuevaPass === confirmarPass)){
+      setMensaje("Las contraseñas no coinciden");
+      return;
+    }
+    //Requisitos mínimos de la contraseña
+    if (nuevaPass.length <= 5) {
+      setMensaje("La contraseña es muy corta");
+      return;
+    }
     //Enviar datos al backend
     try {
       setMensaje("");
@@ -65,7 +76,7 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         body: JSON.stringify({
           nombre: usuario.nombre,
           correo: usuario.correo,
-          passw: usuario.passw,
+          passw: nuevaPass,
         }),
       });
       const data = await res.json();
@@ -106,12 +117,29 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
           className="w-full p-2 border rounded mb-4"
         />
 
-        <label className="block mb-2 font-semibold">Contraseña</label>
+        <label className="block mb-2 font-semibold">Contraseña nueva</label>
         <div className="relative mb-4">
           <input
             type={showPass ? "text" : "password"}
-            value={usuario.passw}
-            onChange={(e) => setUsuario({ ...usuario, passw: e.target.value })}
+            value={nuevaPass}
+            onChange={(e) => setNuevaPass(e.target.value)}
+            className="w-full p-2 border rounded mb-2"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPass((s) => !s)}
+            className="absolute right-2 top-2 text-gray-600"
+          >
+            {showPass ? "Ocultar" : "Mostrar"}
+          </button>
+        </div>
+
+        <label className="block mb-2 font-semibold">Confirmar contraseña</label>
+        <div className="relative mb-4">
+          <input
+            type={showPass ? "text" : "password"}
+            value={confirmarPass}
+            onChange={(e) => setConfirmarPass(e.target.value)}
             className="w-full p-2 border rounded mb-4"
           />
           <button
