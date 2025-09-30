@@ -60,7 +60,7 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
       return;
     }
     //Requisitos mínimos de la contraseña
-    if (nuevaPass.length <= 5) {
+    if (nuevaPass.length < 5) {
       setMensaje("La contraseña es muy corta");
       return;
     }

@@ -22,7 +22,7 @@ export default function FormRegister({ onHandleIsOpen }) {
     }
     //Requisitos mínimos de la contraseña
     if (passw.length < 5) {
-      console.error("La contraseña debe tener al menos 6 caracteres.");
+      console.error("La contraseña debe tener al menos 5 caracteres.");
       return;
     }
     //Validar que no haya campos vacíos
