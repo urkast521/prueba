@@ -1,10 +1,14 @@
 import { useState } from "react";
+import NormalInput from "./subcomponentes/NormalInput";
+import PasswordInput from "./subcomponentes/PasswordInput"
+import OButton from "./subcomponentes/Button";
 
 export default function FormRegister({ onHandleIsOpen }) {
   //Estados para los campos del formulario
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
   const [passw, setPassw] = useState("");
+  const [mensaje, setMensaje] = useState("")
 
   //Funcion para manejar el envio del formulario
   const handleSubmit = async (e) => {
@@ -53,8 +57,12 @@ export default function FormRegister({ onHandleIsOpen }) {
       console.log(data);
 
       if (data.success) {
-        alert("Usuario creado exitosamente!");
-        onHandleIsOpen(true); //Para que vuelva a Login despues de registrarse
+        setMensaje("¡Usuario creado exitosamente!")
+        //Para que vuelva a Login un poco despues de registrarse
+        setTimeout(() => {
+          onHandleIsOpen(true);
+        }, 1500);
+         
       } else {
         alert("Error: " + data.error);
       }
@@ -71,50 +79,15 @@ export default function FormRegister({ onHandleIsOpen }) {
       className="bg-white p-8 rounded shadow-md w-80 textColor2"
     >
       <h1 className="text-2xl font-bold mb-6 text-center">Registro</h1>
-
-      <label className="block mb-2 font-semibold">Nombre completo</label>
-      <input
-        type="text"
-        value={nombre}
-        onChange={(e) => setNombre(e.target.value)}
-        className="w-full p-2 border rounded mb-4"
-      />
-
-      <label className="block mb-2 font-semibold">Correo</label>
-      <input
-        type="email"
-        value={correo}
-        onChange={(e) => setCorreo(e.target.value)}
-        className="w-full p-2 border rounded mb-4"
-        required
-      />
-
-      <label className="block mb-2 font-semibold">Contraseña</label>
-      <input
-        type="password"
-        value={passw}
-        onChange={(e) => setPassw(e.target.value)}
-        className="w-full p-2 border rounded mb-6"
-        required
-      />
-
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-      >
-        Crear cuenta
-      </button>
-
+      <NormalInput inputValue={nombre} handleChangeValue={setNombre} typeInput={"text"}>Nombre completo</NormalInput>
+      <NormalInput inputValue={correo} handleChangeValue={setCorreo} typeInput={"email"}>Correo</NormalInput>
+      <PasswordInput inputValue={passw} handleChangeValue={setPassw} typeInput={"text"}>Contraseña</PasswordInput>
+      <OButton ButtonType={"submit"}>Crear cuenta</OButton>
       <p className="mt-4 text-center">
         ¿Ya tienes cuenta?{" "}
-        <button
-          type="button"
-          onClick={onHandleIsOpen}
-          className="text-blue-600 hover:underline"
-        >
-          Inicia sesión
-        </button>
+        <OButton ButtonType={"underline"} handleClick={onHandleIsOpen} >Inicia sesión</OButton>
       </p>
+      {mensaje && <p className="mt-4 text-green-400 text-center">{mensaje}</p>}
     </form>
   );
 }

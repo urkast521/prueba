@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import OButton from "./subcomponentes/Button";
 
 export default function DesactivarUsuario({ onLogout, token }) {
   //Estado para manejar la carga y mensajes
@@ -6,7 +7,6 @@ export default function DesactivarUsuario({ onLogout, token }) {
   const [mensaje, setMensaje] = useState("");
   //Función para desactivar el usuario
   const handleDesactivar = async () => {
-    if (!id) return;
     setLoading(true);
     setMensaje("");
     //Llamada al API para desactivar el usuario
@@ -42,15 +42,7 @@ export default function DesactivarUsuario({ onLogout, token }) {
         Al desactivar tu cuenta, no podrás iniciar sesión ni acceder a tus
         datos.
       </p>
-
-      <button
-        onClick={handleDesactivar}
-        className="bg-red-600 text-white p-2 rounded hover:bg-red-700"
-        disabled={loading}
-      >
-        {loading ? "Desactivando..." : "Desactivar Cuenta"}
-      </button>
-
+      <OButton ButtonType={"cancelar"} handleClick={handleDesactivar} Disabled={loading}>{loading ? "Desactivando..." : "Desactivar Cuenta"}</OButton>
       {mensaje && <p className="mt-4">{mensaje}</p>}
     </div>
   );

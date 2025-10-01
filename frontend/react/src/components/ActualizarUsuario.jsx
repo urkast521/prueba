@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import PassInput from "./subcomponentes/PasswordInput";
+import NormalInput from "./subcomponentes/NormalInput";
+import OButton from "./subcomponentes/Button";
 
 export default function ActualizarUsuario({ id, onChangeTab, token }) {
   //Estados para manejar el usuario, carga, error, mensaje y visibilidad de la contraseña
@@ -6,7 +9,6 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mensaje, setMensaje] = useState("");
-  const [showPass, setShowPass] = useState(false);
   const [nuevaPass, setNuevaPass]= useState(null);
   const [confirmarPass, setConfirmarPass]= useState(null);
   //Obtener datos del usuario al cargar el componente, vinculado al id recibido por props
@@ -83,12 +85,17 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
       if (data.success) {
         setMensaje("Usuario actualizado con éxito");
         //regresar a la pestaña de consulta general después de actualizar
-        onChangeTab("consulta");
+        setTimeout(() => {
+          onChangeTab("consulta");
+        }, 1500);
+        
       } else setMensaje(`Error: ${data.error}`);
     } catch (err) {
       setMensaje(`Error: ${err.message}`);
     }
   };
+
+
 
   //Mostrar estados de carga y error
   if (loading) return <p>Cargando usuario...</p>;
@@ -116,47 +123,9 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
           onChange={(e) => setUsuario({ ...usuario, correo: e.target.value })}
           className="w-full p-2 border rounded mb-4"
         />
-
-        <label className="block mb-2 font-semibold">Contraseña nueva</label>
-        <div className="relative mb-4">
-          <input
-            type={showPass ? "text" : "password"}
-            value={nuevaPass}
-            onChange={(e) => setNuevaPass(e.target.value)}
-            className="w-full p-2 border rounded mb-2"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPass((s) => !s)}
-            className="absolute right-2 top-2 text-gray-600"
-          >
-            {showPass ? "Ocultar" : "Mostrar"}
-          </button>
-        </div>
-
-        <label className="block mb-2 font-semibold">Confirmar contraseña</label>
-        <div className="relative mb-4">
-          <input
-            type={showPass ? "text" : "password"}
-            value={confirmarPass}
-            onChange={(e) => setConfirmarPass(e.target.value)}
-            className="w-full p-2 border rounded mb-4"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPass((s) => !s)}
-            className="absolute right-2 top-2 text-gray-600"
-          >
-            {showPass ? "Ocultar" : "Mostrar"}
-          </button>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700"
-        >
-          Actualizar
-        </button>
+        <PassInput inputValue={nuevaPass} handleChangeValue={setNuevaPass}>Contraseña nueva</PassInput>
+        <PassInput inputValue={confirmarPass} handleChangeValue={setConfirmarPass}>Confirmar contraseña</PassInput>
+        <OButton ButtonType={"submit"}>Actualizar usuario</OButton>
       </form>
       {mensaje && <p className="mt-4 text-center">{mensaje}</p>}
     </div>

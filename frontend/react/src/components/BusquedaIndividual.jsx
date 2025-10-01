@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import NormalInput from "./subcomponentes/NormalInput";
+import OButton from "./subcomponentes/Button";
 
 export default function BusquedaIndividual({ token }) {
   // Estados para manejar la búsqueda, resultado, error y carga
@@ -44,20 +46,9 @@ export default function BusquedaIndividual({ token }) {
     <div className="max-w-md mx-auto p-3">
       <h2 className="text-xl font-bold mb-4">Buscar Usuario</h2>
 
-      <div className="flex gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Ingresa ID o Nombre"
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          className="flex-1 p-2 border rounded"
-        />
-        <button
-          onClick={handleBuscar}
-          className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Buscar
-        </button>
+      <div className="flex gap-2 mb-4 items-center">
+        <NormalInput inputValue={busqueda} handleChangeValue={setBusqueda} typeInput={"text"} placeHolder="Ingresa ID o Nombre"></NormalInput>
+        <OButton handleClick={handleBuscar}>Buscar</OButton>
       </div>
 
       {loading && <p>Cargando...</p>}

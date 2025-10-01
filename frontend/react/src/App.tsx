@@ -25,3 +25,4 @@ export default function App() {
     </div>
   );
 }
+//Main es el contenedor principal cuando la sesion esta iniciada y contiene el dashboard y el renderizado de ventanas al lado derecho
