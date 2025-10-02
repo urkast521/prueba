@@ -2,8 +2,9 @@ from flask import jsonify, make_response
 from sqlalchemy import text
 from flask_jwt_extended import create_access_token
 from services.hashing_passwords import hash_password, comparar_password
+import re
 
-
+regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
 def insertar_usuario(db, datos):
     #Se Valida que todos los campos requeridos estén presentes y no estén vacíos
@@ -14,6 +15,10 @@ def insertar_usuario(db, datos):
                 "success": False,
                 "message": f"Falta el campo requerido: '{validacion}'."
             }), 400)
+        
+    #Validar que el correo sea un correo valido
+    if not re.fullmatch(regex,datos['correo']):
+        return jsonify({"success": False, "error": "Correo o contraseña erroneos"}), 400
         
     # hashear la contraseña ingresada
     hashed_password = hash_password(datos['passw'])
@@ -72,10 +77,16 @@ def modificar_usuario(db, id, datos):
     if not id:
         return jsonify({"success": False, "error": "ID de usuario no proporcionado"}), 400
     
+    #Validar que el correo sea un correo valido
+    if not re.fullmatch(regex,datos['correo']):
+        return jsonify({"success": False, "error": "Correo o contraseña erroneos"}), 400
+    
     #Validar que haya algo que actualizar
     try:
         if not datos:
             return jsonify({"success": False, "error": "No se proporcionaron datos para actualizar"}), 400
+
+
 
     #Construir la consulta de actualización dinámicamente
     #Set_clauses contendrá las partes de la consulta SET
@@ -135,6 +146,10 @@ def login_usuario(db, datos):
     #Validar que se proporcionen correo y contraseña
     if not correo or not passw_sin_hash:
         return jsonify({"success": False, "error": "Correo y contraseña son obligatorios"}), 400
+    
+    #Validar que el correo sea un correo valido
+    if not re.fullmatch(regex,correo):
+        return jsonify({"success": False, "error": "Correo o contraseña erroneos"}), 400
 
     #Si se proporcionan, se procede a verificar las credenciales
     try:

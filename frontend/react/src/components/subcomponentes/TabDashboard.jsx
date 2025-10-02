@@ -6,8 +6,8 @@ export default function TabDashboard({children, onHandleClick, tabName, activeTa
     return (
         <button
           onClick={() => onHandleClick(tabName)}
-          className={`px-4 py-2 rounded ${
-            activeTab === tabName ? "bg-blue-500 text-white" : "bg-blue-300"
+          className={`mx-0 px-5 py-2 rounded ${
+            activeTab === tabName ? "bg-white  rounded-t-3xl rounded-b-none textColor2" : "bg-gray-400 text-gray-100 rounded-t-3xl rounded-b-none"
           }`}
         >
           {children}

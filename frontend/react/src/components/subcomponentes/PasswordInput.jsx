@@ -17,6 +17,7 @@ export default function PassInput({inputValue, handleChangeValue, children}){
                     type="button"
                     onClick={() => setShowPass((s) => !s)}
                     className="absolute right-2 top-2 text-gray-600"
+                    required
                 >
                     {showPass ? "Ocultar" : "Mostrar"}
             </button>

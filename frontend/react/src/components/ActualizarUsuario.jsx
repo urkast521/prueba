@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import PassInput from "./subcomponentes/PasswordInput";
-import NormalInput from "./subcomponentes/NormalInput";
 import OButton from "./subcomponentes/Button";
 
 export default function ActualizarUsuario({ id, onChangeTab, token }) {
@@ -95,6 +94,14 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
     }
   };
 
+  //Funcion handlerUsuario
+  function handlerSetUsuario(e){
+    const { name, value } = e.target;
+    setUsuario(prevUsuario => ({
+        ...prevUsuario,
+        [name]: value}));
+  }
+
 
 
   //Mostrar estados de carga y error
@@ -108,6 +115,7 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         Actualizar Usuario ID{usuario.id}
       </h2>
       <form onSubmit={handleSubmit}>
+
         <label className="block mb-2 font-semibold">Nombre</label>
         <input
           type="text"

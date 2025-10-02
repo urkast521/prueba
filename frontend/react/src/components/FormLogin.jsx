@@ -2,27 +2,34 @@ import { useState } from "react";
 import PassInput from "./subcomponentes/PasswordInput";
 import OButton from "./subcomponentes/Button";
 import NormalInput from "./subcomponentes/NormalInput";
+import {validarCorreo, validarInput} from "../Utilities/validaciones"
+
 
 export default function FormLogin({ onHandleIsOpen, onHandleIsLogged }) {
   //Estados para los campos del formulario
   const [correo, setCorreo] = useState("");
   const [passw, setPassw] = useState("");
-  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState("");
 
   //Funcion para manejar el submit del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Datos de login:", { correo, passw });
-    //Validar que no haya campos vacíos
-    if (!correo || !passw) {
-      console.error("Por favor, completa todos los campos.");
+
+    //Validaciones de formulario
+    //validar campos vacios
+    if(!(validarInput(correo)&&validarInput(passw))){
+      setError("Error: Los datos ingresados no son validos o estan vacios")
+      console.error("Error: Los datos ingresados no son validos o estan vacios");
       return;
     }
-    //Validacion de los tipos de datos
-    if (typeof correo !== "string" || typeof passw !== "string") {
-      console.error("Los datos ingresados no son válidos.");
+    //Validar el correo 
+    if (!(validarCorreo(correo))){
+      setError("Error: Correo invalido")
+      console.error("Error: Correo invalido");
       return;
     }
+
     //Ejecucion del API
     try {
       const res = await fetch("http://127.0.0.1:5000/login", {
@@ -34,7 +41,7 @@ export default function FormLogin({ onHandleIsOpen, onHandleIsLogged }) {
       if (!res.ok) {
         setCorreo("");
         setPassw("");
-        setMensaje("Error Correo o Contraseña incorrectos");
+        setError("Error Correo o Contraseña incorrectos");
         throw new Error("Error en la autenticación");
       }
       //En caso de exito, obtener los datos
@@ -65,7 +72,7 @@ export default function FormLogin({ onHandleIsOpen, onHandleIsLogged }) {
         ¿No tienes una cuenta?{" "}
         <OButton ButtonType={"underline"} handleClick={onHandleIsOpen} >Regístrate</OButton>
       </p>
-      {mensaje && <p className="mt-4 text-red-600 text-center">{mensaje}</p>}
+      {error && <p className="mt-4 text-red-600 text-center">{error}</p>}
     </form>
   );
 }

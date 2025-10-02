@@ -48,14 +48,14 @@ export default function Dashboard({ onHandleIsLogged }) {
         <OButton handleClick={onHandleIsLogged} ButtonType={"cancelar"}>Cerrar sesión</OButton>
       </header>
 
-      <nav className="flex space-x-4 mb-4">
+      <nav className="flex space-x-4">
         <TabDashboard onHandleClick={handleTabChange} tabName={"consulta"} activeTab={activeTab}>Consulta General</TabDashboard>
         <TabDashboard onHandleClick={handleTabChange} tabName={"actualizar"} activeTab={activeTab}>Actualizar usuario</TabDashboard>
         <TabDashboard onHandleClick={handleTabChange} tabName={"busqueda"} activeTab={activeTab}>Búsqueda individual</TabDashboard>
         <TabDashboard onHandleClick={handleTabChange} tabName={"desactivar"} activeTab={activeTab}>Desactivar cuenta</TabDashboard>
       </nav>
 
-      <section className="p-4 bg-white rounded shadow max-h-140 overflow-y-auto textColor2">
+      <section className="p-4 bg-white rounded rounded-t-none shadow max-h-140 overflow-y-auto textColor2">
         {activeTab === "consulta" && <ConsultaGeneral token={token} />}
         {activeTab === "actualizar" && (
           <ActualizarUsuario

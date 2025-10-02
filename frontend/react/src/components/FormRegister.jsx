@@ -2,36 +2,38 @@ import { useState } from "react";
 import NormalInput from "./subcomponentes/NormalInput";
 import PasswordInput from "./subcomponentes/PasswordInput"
 import OButton from "./subcomponentes/Button";
+import {validarCorreo, validarInput, validarPassword} from "../Utilities/validaciones"
 
 export default function FormRegister({ onHandleIsOpen }) {
   //Estados para los campos del formulario
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
   const [passw, setPassw] = useState("");
-  const [mensaje, setMensaje] = useState("")
+  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState("");
 
   //Funcion para manejar el envio del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    /*Prueba de recepción de datos
-    console.log("Datos de registro:", { nombre, correo, passw });*/
-    //Validacion de los tipos de datos
-    if (
-      typeof nombre !== "string" ||
-      typeof correo !== "string" ||
-      typeof passw !== "string"
-    ) {
-      console.error("Los datos ingresados no son válidos.");
+
+    //Validaciones de formulario
+    //validar campos vacios
+    if(!(validarInput(nombre) && validarInput(correo))&& validarInput(passw)){
+      setError("Error: Los datos ingresados no son validos o estan vacios mm")
+      console.error("Error: Los datos ingresados no son validos o estan vacios");
       return;
     }
-    //Requisitos mínimos de la contraseña
-    if (passw.length < 5) {
-      console.error("La contraseña debe tener al menos 5 caracteres.");
+    //Validar el correo 
+    if (!(validarCorreo(correo))){
+      setError("Error: Correo invalido")
+      console.error("Error: Correo invalido");
       return;
     }
-    //Validar que no haya campos vacíos
-    if (!nombre || !correo || !passw) {
-      console.error("Por favor, completa todos los campos.");
+
+    //validar contraseña
+    if(!(validarPassword(passw))){
+      setError("Error: La contraseña es insegura")
+      console.error("Error: La contraseña es insegura");
       return;
     }
 
@@ -88,6 +90,7 @@ export default function FormRegister({ onHandleIsOpen }) {
         <OButton ButtonType={"underline"} handleClick={onHandleIsOpen} >Inicia sesión</OButton>
       </p>
       {mensaje && <p className="mt-4 text-green-400 text-center">{mensaje}</p>}
+      {error && <p className="mt-4 text-red-400 text-center">{error}</p>}
     </form>
   );
 }
