@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import OButton from "./subcomponentes/Button";
+import ConfirmationWindow from "./subcomponentes/WindowConfirm";
 
 export default function DesactivarUsuario({ onLogout, token }) {
   //Estado para manejar la carga y mensajes
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState("");
+  const [abierto, setAbierto] = useState(false);
   //Función para desactivar el usuario
   const handleDesactivar = async () => {
     setLoading(true);
@@ -34,6 +36,12 @@ export default function DesactivarUsuario({ onLogout, token }) {
       setLoading(false);
     }
   };
+
+  //Abrir/Cerrar ventana de confirmacion
+  function onHandleWindow (){
+    setAbierto((s)=>!s);
+  }
+
   //Renderizado del componente
   return (
     <div className="max-w-md mx-auto p-3">
@@ -42,8 +50,17 @@ export default function DesactivarUsuario({ onLogout, token }) {
         Al desactivar tu cuenta, no podrás iniciar sesión ni acceder a tus
         datos.
       </p>
-      <OButton ButtonType={"cancelar"} handleClick={handleDesactivar} Disabled={loading}>{loading ? "Desactivando..." : "Desactivar Cuenta"}</OButton>
-      {mensaje && <p className="mt-4">{mensaje}</p>}
+      <OButton ButtonType={"cancelar"} handleClick={onHandleWindow} Disabled={loading}>{loading ? "Desactivando..." : "Desactivar Cuenta"}</OButton>
+      {abierto && <ConfirmationWindow 
+          onHandlePositive={handleDesactivar} 
+          onHandleNegative={onHandleWindow} 
+          onSetTitle={"Confirmar desactivación"} 
+          onSetMessage={"La siguiente acción desactivara su cuenta de forma permanente, ¿Esta seguro que desea continuar?"} 
+          btnPositive={"Desactivar"} 
+          btnNegative={"Cancelar"}
+          btnStyle={"cancelar"}>
+        {mensaje && <p className="mt-4">{mensaje}</p>}
+        </ConfirmationWindow>}
     </div>
   );
 }

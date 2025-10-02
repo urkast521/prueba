@@ -19,7 +19,7 @@ export default function FormRegister({ onHandleIsOpen }) {
     //Validaciones de formulario
     //validar campos vacios
     if(!(validarInput(nombre) && validarInput(correo))&& validarInput(passw)){
-      setError("Error: Los datos ingresados no son validos o estan vacios mm")
+      setError("Error: Los datos ingresados no son validos o estan vacios")
       console.error("Error: Los datos ingresados no son validos o estan vacios");
       return;
     }

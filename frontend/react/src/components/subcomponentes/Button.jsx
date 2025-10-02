@@ -3,7 +3,7 @@ export default function OButton({ButtonType, children, handleClick, Disabled}){
 
     if(ButtonType === "submit"){
         return (
-            <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+            <button type="submit" className="w-full bg-blue-600 text-white p-2 m-2 rounded hover:bg-blue-700">
                 {children}
             </button>
         );
@@ -15,7 +15,7 @@ export default function OButton({ButtonType, children, handleClick, Disabled}){
         );
     }else if(ButtonType === "cancelar"){
         return (
-            <button type="button" onClick={handleClick} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" disabled={Disabled}>
+            <button type="button" onClick={handleClick} className="bg-red-500 text-white px-4 py-2  m-2 rounded hover:bg-red-600" disabled={Disabled}>
                 {children}
             </button>
         );
@@ -23,7 +23,7 @@ export default function OButton({ButtonType, children, handleClick, Disabled}){
 
     //Boton normal sin tipo
     return(
-        <button type="button" onClick={handleClick} className="bg-blue-600 text-white p-2 mb-4 rounded hover:bg-blue-700">
+        <button type="button" onClick={handleClick} className="bg-blue-600 text-white p-2 px-4  m-2 rounded hover:bg-blue-700">
           {children}
         </button>
     );
