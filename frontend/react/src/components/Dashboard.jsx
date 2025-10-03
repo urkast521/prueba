@@ -5,6 +5,7 @@ import BusquedaIndividual from "./BusquedaIndividual";
 import DesactivarUsuario from "./DesactivarUsuario";
 import TabDashboard from "./subcomponentes/TabDashboard"
 import OButton from "./subcomponentes/Button";
+import TarjetaDeUsuario from "./TarjetaDeUsuario";
 
 export default function Dashboard({ onHandleIsLogged }) {
   //Estado para manejar la pestaña activa
@@ -44,8 +45,13 @@ export default function Dashboard({ onHandleIsLogged }) {
   return (
     <div className="p-4">
       <header className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Panel de control</h1>
-        <OButton handleClick={onHandleIsLogged} ButtonType={"cancelar"}>Cerrar sesión</OButton>
+        <div className="auto">
+          <h1 className="text-2xl font-bold">Panel de control</h1>
+          <TarjetaDeUsuario id={id} nombre={usuario.nombre} correo={usuario.correo}></TarjetaDeUsuario>
+        </div>
+        <div>
+          <OButton handleClick={onHandleIsLogged} ButtonType={"cancelar"}>Cerrar sesión</OButton>
+        </div>
       </header>
 
       <nav className="flex space-x-4">
@@ -55,7 +61,7 @@ export default function Dashboard({ onHandleIsLogged }) {
         <TabDashboard onHandleClick={handleTabChange} tabName={"desactivar"} activeTab={activeTab}>Desactivar cuenta</TabDashboard>
       </nav>
 
-      <section className="p-4 bg-white rounded rounded-t-none shadow max-h-140 overflow-y-auto textColor2">
+      <section className="p-4 bg-white rounded rounded-t-none shadow max-h-120 overflow-y-auto textColor2">
         {activeTab === "consulta" && <ConsultaGeneral token={token} />}
         {activeTab === "actualizar" && (
           <ActualizarUsuario

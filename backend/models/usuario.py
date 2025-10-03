@@ -7,6 +7,7 @@ class Usuario(db.Model):
     nombre = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     passw = db.Column(db.String(255), nullable=False)
+    foto = db.Column(db.String(255), nullable=True)
     estado = db.Column(db.Integer, nullable=False, default=1)
 
     def __repr__(self):

@@ -13,6 +13,19 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
   const [nuevaPass, setNuevaPass]= useState(null);
   const [confirmarPass, setConfirmarPass]= useState(null);
   const [abierto, setAbierto] = useState(false);
+  const [userFile, setUserFile] = useState(null);
+
+  //Handler del Fichero
+  function handleFile(e){
+    if(e.target.files.length > 0){
+      setUserFile(e.target.files[0])
+      setMensaje(" "+userFile)
+
+    }else{
+      setUserFile(null);
+    }
+  }
+
   //Obtener datos del usuario al cargar el componente, vinculado al id recibido por props
   useEffect(() => {
     //Validar que el id sea válido
@@ -43,20 +56,28 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
   //Manejo del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
+    //Creación del form data
+    const formData = new FormData();
+
+    //Validar Nombre y Correo
+    if(!(validarInput(usuario.nombre) && validarInput(usuario.correo))){
+      setMensaje("Error: El usuario o correo estan vacios o son invalidos")
+      return;
+    }
     //Validar correo valido
     if (!(validarCorreo(usuario.correo))){
-          setMensaje("Error: Correo invalido")
-          return;
-        }
+      setMensaje("Error: Correo invalido")
+      return;
+    }
+    //Agregar Nombre y Correo al formData
+    formData.append("nombre", usuario.correo);
+    formData.append("correo", usuario.nombre);
 
-    //validar campos vacios y tipo de datos
-    if(!nuevaPass && !confirmarPass){
-      //Revisamos que nombre y correo tengan información
-      if(!(validarInput(usuario.nombre) && validarInput(usuario.correo))){
-        setMensaje("Error: El usuario o correo estan vacios o son invalidos")
-        return;
-      }
-      //Si todo cumplio los filtros, actualizar sin modificar contraseña
+    //Pasados los filtros escogemos que caso de envio sucedera
+    //Solo update de foto
+    if(userFile && !nuevaPass && !confirmarPass){//Update de foto sin contraseñas
+      formData.append("foto", userFile)
+
       try {
         setMensaje("");
         const res = await fetch(`http://127.0.0.1:5000/usuarios/modificar`, {
@@ -82,8 +103,14 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
       } catch (err) {
         setMensaje(`Error: ${err.message}`);
       }
-    }else{
-      //validar contraseña por seguridad y que sean iguales los campos
+
+    }
+    if(nuevaPass && confirmarPass){//Update de usuario con o sin nueva foto
+      //Se agrega o No la foto
+      if(userFile){
+        formData.append("foto", userFile);
+      }
+      //Validaciones de contraseña
       if(!(validarPassword(nuevaPass))){
         setMensaje("Error: La nueva contraseña es insegura")
         return;
@@ -92,12 +119,9 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         setMensaje("Las contraseñas no coinciden");
         return;
       }
-      //Revisamos que nombre y correo tengan información
-      if(!(validarInput(usuario.nombre) && validarInput(usuario.correo))){
-        setMensaje("Error: El usuario o correo estan vacios o son invalidos")
-        return;
-      }
-      //Enviar datos al backend esta vez si actualiza contraseña
+      //Se agrega la contraseña validada
+      formData.append("passw", nuevaPass);
+
       try {
         setMensaje("");
         const res = await fetch(`http://127.0.0.1:5000/usuarios/modificar`, {
@@ -110,6 +134,34 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
             nombre: usuario.nombre,
             correo: usuario.correo,
             passw: nuevaPass,
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setMensaje("Usuario actualizado con éxito");
+          //regresar a la pestaña de consulta general después de actualizar
+          setTimeout(() => {
+            onChangeTab("consulta");
+          }, 1500);
+          
+        } else setMensaje(`Error: ${data.error}`);
+      } catch (err) {
+        setMensaje(`Error: ${err.message}`);
+      }
+    }
+    if(!userFile && !nuevaPass && !confirmarPass){//update solo de nombre y correo
+      
+      try {
+        setMensaje("");
+        const res = await fetch(`http://127.0.0.1:5000/usuarios/modificar`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            nombre: usuario.nombre,
+            correo: usuario.correo,
           }),
         });
         const data = await res.json();
@@ -158,6 +210,16 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
           value={usuario.correo}
           onChange={(e) => setUsuario({ ...usuario, correo: e.target.value })}
           className="w-full p-2 border rounded mb-4"
+        />
+        <label className="block mb-2 font-semibold">Foto de perfil</label>
+        <input
+          type="file"
+          className="block w-full 
+            file:mb-3 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0
+            file:text-sm file:bg-blue-600 
+            file:text-white hover:file:bg-blue-700"
+          onChange={handleFile}
+          accept=".png, .jpg, .jpeg"
         />
         <PassInput inputValue={nuevaPass} handleChangeValue={setNuevaPass} requiredValue={false}>Contraseña nueva</PassInput>
         <PassInput inputValue={confirmarPass} handleChangeValue={setConfirmarPass} requiredValue={false}>Confirmar contraseña</PassInput>

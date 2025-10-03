@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nombre VARCHAR(100) NOT NULL, -- Nombre Completo
     correo VARCHAR(100) NOT NULL UNIQUE, -- Correo unico
     passw VARCHAR(255) NOT NULL,
+    foto VARCHAR(255) NULL,
     estado INT NOT NULL DEFAULT 1 -- 1: activo, 0: inactivo
 );

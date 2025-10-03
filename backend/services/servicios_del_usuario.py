@@ -3,6 +3,11 @@ from sqlalchemy import text
 from flask_jwt_extended import create_access_token
 from services.hashing_passwords import hash_password, comparar_password
 import re
+#Cosas faltantes:
+#1 - Agregar al front una pequeña foto del usuario debajo de Panel de control con un Componente "userWelcome"
+#2 - Agregar el campo de fotografia a Actualizar usuario, debajo de correo
+#3 - Cambiar el envio a formData en el front
+#4 - Manejar la recepción de formData en el Back y guardar ruta de imagen y guardar imagen
 
 regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
