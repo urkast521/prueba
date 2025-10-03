@@ -26,6 +26,7 @@ export default function Dashboard({ onHandleIsLogged }) {
 
   //Obtener el id del usuario si existe y es un objeto
   const id = usuario && typeof usuario === "object" ? usuario.id : null;
+  const foto = usuario && typeof usuario === "object" ? usuario.foto : null;
 
   //Funcion para cambiar la pestaña activa
   function handleTabChange(tab) {
@@ -47,7 +48,7 @@ export default function Dashboard({ onHandleIsLogged }) {
       <header className="flex justify-between items-center mb-6">
         <div className="auto">
           <h1 className="text-2xl font-bold">Panel de control</h1>
-          <TarjetaDeUsuario id={id} nombre={usuario.nombre} correo={usuario.correo}></TarjetaDeUsuario>
+          {usuario &&(<TarjetaDeUsuario id={id} nombre={usuario.nombre} correo={usuario.correo} foto={foto}></TarjetaDeUsuario>)}
         </div>
         <div>
           <OButton handleClick={onHandleIsLogged} ButtonType={"cancelar"}>Cerrar sesión</OButton>

@@ -19,8 +19,6 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
   function handleFile(e){
     if(e.target.files.length > 0){
       setUserFile(e.target.files[0])
-      setMensaje(" "+userFile)
-
     }else{
       setUserFile(null);
     }
@@ -70,8 +68,8 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
       return;
     }
     //Agregar Nombre y Correo al formData
-    formData.append("nombre", usuario.correo);
-    formData.append("correo", usuario.nombre);
+    formData.append("nombre", usuario.nombre);
+    formData.append("correo", usuario.correo);
 
     //Pasados los filtros escogemos que caso de envio sucedera
     //Solo update de foto
@@ -83,13 +81,9 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         const res = await fetch(`http://127.0.0.1:5000/usuarios/modificar`, {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            nombre: usuario.nombre,
-            correo: usuario.correo,
-          }),
+          body: formData,
         });
         const data = await res.json();
         if (data.success) {
@@ -102,6 +96,8 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         } else setMensaje(`Error: ${data.error}`);
       } catch (err) {
         setMensaje(`Error: ${err.message}`);
+      } finally{
+        setLoading(false)
       }
 
     }
@@ -127,14 +123,9 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         const res = await fetch(`http://127.0.0.1:5000/usuarios/modificar`, {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            nombre: usuario.nombre,
-            correo: usuario.correo,
-            passw: nuevaPass,
-          }),
+          body: formData,
         });
         const data = await res.json();
         if (data.success) {
@@ -147,6 +138,8 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         } else setMensaje(`Error: ${data.error}`);
       } catch (err) {
         setMensaje(`Error: ${err.message}`);
+      } finally{
+        setLoading(false)
       }
     }
     if(!userFile && !nuevaPass && !confirmarPass){//update solo de nombre y correo
@@ -156,13 +149,9 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         const res = await fetch(`http://127.0.0.1:5000/usuarios/modificar`, {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            nombre: usuario.nombre,
-            correo: usuario.correo,
-          }),
+          body: formData,
         });
         const data = await res.json();
         if (data.success) {
@@ -175,6 +164,8 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         } else setMensaje(`Error: ${data.error}`);
       } catch (err) {
         setMensaje(`Error: ${err.message}`);
+      } finally{
+        setLoading(false)
       }
     }
   };

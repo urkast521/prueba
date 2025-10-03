@@ -12,16 +12,28 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
+from flask import Flask, jsonify, request, send_from_directory 
+
+
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY") 
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(
     hours=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES_HOURS", 2))
 )
+#Ruta estatica
+UPLOAD_FOLDER = os.path.join(app.root_path, 'uploads', 'profilepics')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+print(f"La carpeta estática está mapeada a: {UPLOAD_FOLDER}")
+app.static_folder = UPLOAD_FOLDER
+app.static_url_path = '/uploads'
+
+
+#Extensiones de foto
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'} 
 jwt = JWTManager(app)
 
 #Configuración de la base de datos
@@ -72,8 +84,32 @@ def consultar_usuarios_app():
 @jwt_required()
 def actualizar_usuario_app():
     id_usuario= int(get_jwt_identity())
-    datos = request.json 
-    return modificar_usuario(db, id_usuario, datos)
+
+    datos={
+        'nombre': request.form.get('nombre'),
+        'correo': request.form.get('correo'),
+        'passw': request.form.get('passw'),
+    }
+
+    foto_file = request.files.get('foto')
+    ruta = None
+    if foto_file and foto_file.filename:
+        if not allowed_file(foto_file.filename):
+            return jsonify({
+                "success": False, 
+                "error": "Tipo de archivo no permitido. Solo se aceptan PNG, JPG, JPEG o GIF."
+            }), 400
+        
+        ext = foto_file.filename.rsplit('.', 1)[1].lower()
+        nombre_unico = f"profile_{id_usuario}.{ext}"
+        ruta = os.path.join(app.config['UPLOAD_FOLDER'], nombre_unico)
+        foto_file.save(ruta)
+
+        datos['foto'] = nombre_unico
+
+    datos_limpios = {k: v for k, v in datos.items() if v is not None}
+
+    return modificar_usuario(db, id_usuario, datos_limpios)
 
 #Ruta para desactivar un usuario
 @app.route('/usuarios/desactivar', methods=['PUT'])
@@ -81,6 +117,26 @@ def actualizar_usuario_app():
 def desactivar():
     id_usuario= int(get_jwt_identity())
     return desactivar_usuario(db, id_usuario)
+
+
+def allowed_file(filename):
+    #Asegura que el archivo tenga un nombre y un punto
+    if '.' not in filename:
+        return False
+    
+    #obtiene la parte de la extensión (después del último punto) y la convierte a minúsculas
+    extension = filename.rsplit('.', 1)[1].lower()
+    
+    #Verifica si la extensión está en la lista de permitidas
+    return extension in ALLOWED_EXTENSIONS
+
+# Nueva ruta dedicada para servir las imágenes de perfil
+@app.route('/uploads/<filename>')
+def serve_uploaded_file(filename):
+    # Usa send_from_directory para servir el archivo desde la carpeta UPLOAD_FOLDER
+    # Flask manejará automáticamente la ruta y los errores 404 si el archivo no existe.
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

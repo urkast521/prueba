@@ -81,18 +81,15 @@ def modificar_usuario(db, id, datos):
     #Validar que el ID sea proporcionado
     if not id:
         return jsonify({"success": False, "error": "ID de usuario no proporcionado"}), 400
-    
+    #validar que haya datos en datos
+    if not datos:
+        return jsonify({"success": False, "error": "No se proporcionaron datos para actualizar"}), 400
     #Validar que el correo sea un correo valido
     if not re.fullmatch(regex,datos['correo']):
         return jsonify({"success": False, "error": "Correo o contraseña erroneos"}), 400
     
     #Validar que haya algo que actualizar
     try:
-        if not datos:
-            return jsonify({"success": False, "error": "No se proporcionaron datos para actualizar"}), 400
-
-
-
     #Construir la consulta de actualización dinámicamente
     #Set_clauses contendrá las partes de la consulta SET
     #Params contendrá los valores a actualizar
@@ -187,6 +184,7 @@ def login_usuario(db, datos):
             "id": usuario["id"],
             "nombre": usuario["nombre"],
             "correo": usuario["correo"],
+            "foto": usuario["foto"],
             "estado": usuario["estado"]
         }
         return jsonify({
