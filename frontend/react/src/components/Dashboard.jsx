@@ -7,6 +7,7 @@ import DesactivarUsuario from "./DesactivarUsuario";
 import TabDashboard from "./subcomponentes/TabDashboard"
 import OButton from "./subcomponentes/Button";
 import TarjetaDeUsuario from "./TarjetaDeUsuario";
+import {transitionVariants} from "../Utilities/validaciones"
 
 export default function Dashboard({ onHandleIsLogged }) {
   //Estado para manejar la pestaña activa
@@ -82,22 +83,32 @@ export default function Dashboard({ onHandleIsLogged }) {
         <TabDashboard onHandleClick={handleTabChange} tabName={"busqueda"} activeTab={activeTab}>Búsqueda individual</TabDashboard>
         <TabDashboard onHandleClick={handleTabChange} tabName={"desactivar"} activeTab={activeTab}>Desactivar cuenta</TabDashboard>
       </nav>
-
-      <section className="p-4 bg-white rounded rounded-t-none shadow max-h-120 overflow-y-auto textColor2">
-        {activeTab === "consulta" && <ConsultaGeneral token={token} />}
-        {activeTab === "actualizar" && (
-          <ActualizarUsuario
-            id={id}
-            onChangeTab={handleTabChange}
-            token={token}
-            onUserUpdate={handleUserUpdate}
-          />
-        )}
-        {activeTab === "busqueda" && <BusquedaIndividual token={token} />}
-        {activeTab === "desactivar" && (
-          <DesactivarUsuario onLogout={onHandleIsLogged} token={token} />
-        )}
+    <AnimatePresence mode="wait">
+      <section className="p-4 bg-white rounded rounded-t-none shadow max-h-120 overflow-y-auto textColor2" key={activeTab}>
+        <motion.div
+          key={activeTab}
+          variants={transitionVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={{ duration: 0.3 }}
+        >
+          {activeTab === "consulta" && <ConsultaGeneral token={token} />}
+          {activeTab === "actualizar" && (
+            <ActualizarUsuario
+              id={id}
+              onChangeTab={handleTabChange}
+              token={token}
+              onUserUpdate={handleUserUpdate}
+            />
+          )}
+          {activeTab === "busqueda" && <BusquedaIndividual token={token} />}
+          {activeTab === "desactivar" && (
+            <DesactivarUsuario onLogout={onHandleIsLogged} token={token} />
+          )}
+        </motion.div>
       </section>
+    </AnimatePresence> 
     </div>
   );
 }

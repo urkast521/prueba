@@ -29,3 +29,10 @@ export const validarPassword = (passw) =>{
 
     return true;
 }
+
+  //Variantes de la animacion
+  export const transitionVariants = {
+    initial: { opacity: 0, x: 0 }, 
+    animate: { opacity: 1, x: 0 },  
+    exit: { opacity: 0, x: 0 },  
+  };

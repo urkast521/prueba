@@ -48,7 +48,7 @@ export default function BusquedaIndividual({ token }) {
     <div className="max-w-md mx-auto p-3">
       <h2 className="text-xl font-bold mb-4">Buscar Usuario</h2>
 
-      <div className="flex gap-2 mb-4 items-center">
+      <div className="flex gap-1 mb-4 items-center justify-center">
         <NormalInput inputValue={busqueda} handleChangeValue={setBusqueda} typeInput={"text"} placeHolder="Ingresa ID o Nombre"></NormalInput>
         <OButton handleClick={handleBuscar}>Buscar</OButton>
       </div>

@@ -1,7 +1,7 @@
 export default function NormalInput({children, inputValue, handleChangeValue, typeInput, placeHolder=""}){
     return(
         <>
-            <label className="block mb-2 font-semibold">{children}</label>
+            {children && <label className="block mb-2 font-semibold">{children}</label>}
             <input
             type={typeInput}
             value={inputValue}

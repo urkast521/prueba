@@ -23,7 +23,7 @@ export default function OButton({ButtonType, children, handleClick, Disabled}){
 
     //Boton normal sin tipo
     return(
-        <button type="button" onClick={handleClick} className="bg-blue-600 text-white p-2 px-4  m-2 rounded hover:bg-blue-700">
+        <button type="button" onClick={handleClick} className="bg-blue-600 text-white p-2 px-4   mx-2 mb-4  rounded hover:bg-blue-700">
           {children}
         </button>
     );

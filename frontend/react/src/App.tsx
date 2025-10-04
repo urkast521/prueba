@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
+import { motion, AnimatePresence } from "framer-motion";
+import {transitionVariants} from "./Utilities/validaciones" //marcan error por que son jsx
 
 export default function App() {
   const [isLogged, setIsLogged] = useState(false);
@@ -16,13 +18,34 @@ export default function App() {
   }
 
   return (
-    <div className={`${isLogged ? "fijarTop" : "App"}`}>
-      {isLogged ? (
-        <Dashboard onHandleIsLogged={handleLogout}></Dashboard>
-      ) : (
-        <Login onHandleIsLogged={handleLogin}></Login>
-      )}
-    </div>
+    <AnimatePresence mode="wait">
+      <div className={`${isLogged ? "fijarTop" : "App"}`}>
+        
+          {isLogged ? (
+            <motion.div
+              key="dashboard"
+              variants={transitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.2 }}
+            >
+              <Dashboard onHandleIsLogged={handleLogout}></Dashboard>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="login"
+              variants={transitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.2 }}
+            >
+              <Login onHandleIsLogged={handleLogin}></Login>
+            </motion.div>
+          )}
+        
+      </div>
+    </AnimatePresence>
   );
 }
-//Main es el contenedor principal cuando la sesion esta iniciada y contiene el dashboard y el renderizado de ventanas al lado derecho

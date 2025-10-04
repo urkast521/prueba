@@ -5,8 +5,10 @@ const FOTO_BASE_URL = "http://127.0.0.1:5000/uploads/";
 
 export default function TarjetaDeUsuario({id, nombre, correo, foto}){
 
+    const cacheBuster = foto ? `?t=${Date.now()}` : '';
+
     const imageUrl = foto 
-        ? FOTO_BASE_URL + foto // Si hay nombre de foto, construye la URL real
+        ? FOTO_BASE_URL + foto + cacheBuster // Si hay nombre de foto, construye la URL real
         : FOTO_BASE_URL+"unnamed.png"; // Avatar por defecto si 'foto' es null
 
     return(
