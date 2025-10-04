@@ -3,14 +3,11 @@ from sqlalchemy import text
 from flask_jwt_extended import create_access_token
 from services.hashing_passwords import hash_password, comparar_password
 import re
-#Cosas faltantes:
-#1 - Agregar al front una pequeña foto del usuario debajo de Panel de control con un Componente "userWelcome"
-#2 - Agregar el campo de fotografia a Actualizar usuario, debajo de correo
-#3 - Cambiar el envio a formData en el front
-#4 - Manejar la recepción de formData en el Back y guardar ruta de imagen y guardar imagen
 
+#Expresion regular para verificar el correo
 regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
+#Funcion para registrar un usuario
 def insertar_usuario(db, datos):
     #Se Valida que todos los campos requeridos estén presentes y no estén vacíos
     validaciones = ['nombre', 'correo', 'passw']
@@ -27,8 +24,10 @@ def insertar_usuario(db, datos):
         
     # hashear la contraseña ingresada
     hashed_password = hash_password(datos['passw'])
+
     # sustituir el valor de passw por el valor hasheado
     datos['passw']= hashed_password
+
     # Si todas las validaciones pasan, se procede a insertar el usuario
     try:
         query = text("""
@@ -51,8 +50,10 @@ def insertar_usuario(db, datos):
     finally:
         db.session.close()
     
+#Funcion para consultar un usuario especifico o todos
 def consultar_usuarios(db, params=None):
     try:
+
         # Si se proporciona un nombre o id, busca por nombre o id, si no, devuelve todos
         if params:
             if 'id' in params:
@@ -76,19 +77,21 @@ def consultar_usuarios(db, params=None):
     finally:
         db.session.close()
 
+#Modificar un usuario
 def modificar_usuario(db, id, datos):
 
     #Validar que el ID sea proporcionado
     if not id:
         return jsonify({"success": False, "error": "ID de usuario no proporcionado"}), 400
+    
     #validar que haya datos en datos
     if not datos:
         return jsonify({"success": False, "error": "No se proporcionaron datos para actualizar"}), 400
+    
     #Validar que el correo sea un correo valido
     if not re.fullmatch(regex,datos['correo']):
         return jsonify({"success": False, "error": "Correo o contraseña erroneos"}), 400
     
-    #Validar que haya algo que actualizar
     try:
     #Construir la consulta de actualización dinámicamente
     #Set_clauses contendrá las partes de la consulta SET
@@ -103,7 +106,7 @@ def modificar_usuario(db, id, datos):
                 hashed_password = hash_password(value)
                 # sustituir el valor de passw por el valor hasheado
                 params[key]= hashed_password
-
+        #Agregar el ID del usuario a actualizar
         params['id'] = id
         query = text(f"UPDATE usuarios SET {', '.join(set_clauses)} WHERE id = :id")
 
@@ -120,6 +123,7 @@ def modificar_usuario(db, id, datos):
     finally:
         db.session.close()
 
+#Desactivar usuario de manera logica
 def desactivar_usuario(db, id):
 
     #Validar que el ID sea proporcionado
@@ -141,7 +145,9 @@ def desactivar_usuario(db, id):
     finally:
         db.session.close()
 
+#Inicio de sesion del usuario
 def login_usuario(db, datos):
+    #Obtener datos de inicio de sesion
     correo = datos.get("correo")
     passw_sin_hash = datos.get("passw")
 

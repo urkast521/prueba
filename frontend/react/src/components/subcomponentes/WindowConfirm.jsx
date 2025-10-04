@@ -1,7 +1,5 @@
 import OButton from "./Button";
-
-
-
+//Ventana emergente
 export default function ConfirmationWindow({onHandlePositive, onHandleNegative, onSetTitle, onSetMessage, btnPositive, btnNegative, btnStyle, children}){
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800/70 z-50">

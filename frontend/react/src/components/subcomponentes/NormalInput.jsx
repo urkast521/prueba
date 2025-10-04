@@ -1,3 +1,4 @@
+//Componente de Input Normal
 export default function NormalInput({children, inputValue, handleChangeValue, typeInput, placeHolder=""}){
     return(
         <>

@@ -15,9 +15,10 @@ from datetime import timedelta
 from flask import Flask, jsonify, request, send_from_directory 
 
 
-
+#Cargar variables de entorno
 load_dotenv()
 
+#Configurar el inicio
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY") 
@@ -43,11 +44,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
 #Inicialización de la base de datos
 db = SQLAlchemy(app)
 
-# Ruta de prueba
-# @app.route('/')
-# def index():
-#     return "¡Backend funcionando con Flask y MySQL!"
-
 #Rutas para los servicios del usuario
 #Ruta de login no autenticada
 @app.route('/login', methods=['POST'])
@@ -65,6 +61,7 @@ def insert_usuario_app():
 @app.route('/usuarios', methods=['GET'])
 @jwt_required()
 def consultar_usuarios_app():
+    #Recuperar datos
     id_usuario = request.args.get('id', type=int)
     nombre = request.args.get('nombre')
 
@@ -85,12 +82,13 @@ def consultar_usuarios_app():
 def actualizar_usuario_app():
     id_usuario= int(get_jwt_identity())
 
+    #Construir los datos
     datos={
         'nombre': request.form.get('nombre'),
         'correo': request.form.get('correo'),
         'passw': request.form.get('passw'),
     }
-
+    #revisar si hay foto y en caso de haber agregarla al archivo de datos
     foto_file = request.files.get('foto')
     ruta = None
     if foto_file and foto_file.filename:
@@ -106,7 +104,7 @@ def actualizar_usuario_app():
         foto_file.save(ruta)
 
         datos['foto'] = nombre_unico
-
+    #Limpiar datos
     datos_limpios = {k: v for k, v in datos.items() if v is not None}
 
     return modificar_usuario(db, id_usuario, datos_limpios)
@@ -118,7 +116,7 @@ def desactivar():
     id_usuario= int(get_jwt_identity())
     return desactivar_usuario(db, id_usuario)
 
-
+#Funcion para validar tipo de archivo valido de la foto
 def allowed_file(filename):
     #Asegura que el archivo tenga un nombre y un punto
     if '.' not in filename:

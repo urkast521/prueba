@@ -3,6 +3,7 @@ import NormalInput from "./subcomponentes/NormalInput";
 import PasswordInput from "./subcomponentes/PasswordInput"
 import OButton from "./subcomponentes/Button";
 import {validarCorreo, validarInput, validarPassword} from "../Utilities/validaciones"
+import { ContainerFilled } from "@ant-design/icons";
 
 export default function FormRegister({ onHandleIsOpen }) {
   //Estados para los campos del formulario
@@ -66,11 +67,12 @@ export default function FormRegister({ onHandleIsOpen }) {
         }, 500);
          
       } else {
-        alert("Error: " + data.error);
+        if (data.error.includes("Duplicate entry"))
+        setError("Error: El correo ya esta en uso.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error al conectar con el servidor");
+      setError("Error al conectar con el servidor");
     }
   };
 

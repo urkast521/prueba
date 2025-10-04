@@ -1,5 +1,5 @@
 
-
+//Componente de pestañas del dashboard
 export default function TabDashboard({children, onHandleClick, tabName, activeTab}){
 
 

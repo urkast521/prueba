@@ -14,19 +14,15 @@ export default function FormLogin({ onHandleIsOpen, onHandleIsLogged }) {
   //Funcion para manejar el submit del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Datos de login:", { correo, passw });
-
     //Validaciones de formulario
     //validar campos vacios
     if(!(validarInput(correo)&&validarInput(passw))){
       setError("Error: Los datos ingresados no son validos o estan vacios")
-      console.error("Error: Los datos ingresados no son validos o estan vacios");
       return;
     }
     //Validar el correo 
     if (!(validarCorreo(correo))){
       setError("Error: Correo invalido")
-      console.error("Error: Correo invalido");
       return;
     }
 
@@ -46,7 +42,6 @@ export default function FormLogin({ onHandleIsOpen, onHandleIsLogged }) {
       }
       //En caso de exito, obtener los datos
       const data = await res.json();
-      console.log("Respuesta del servidor:", data);
       //Guardar el token y data en el sessionStorage
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("usuario", JSON.stringify(data.usuario));

@@ -32,7 +32,6 @@ export default function Dashboard({ onHandleIsLogged }) {
 
 //Funcion de recarga del dashboard
     const handleUserUpdate = useCallback(() => {
-        console.log("Actualizando estado de usuario en Dashboard...");
         const usuarioData = sessionStorage.getItem("usuario");
         if (usuarioData) {
             try {
