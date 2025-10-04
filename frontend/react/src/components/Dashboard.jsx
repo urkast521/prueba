@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ConsultaGeneral from "./ConsultaGeneral";
 import ActualizarUsuario from "./ActualizarUsuario";
 import BusquedaIndividual from "./BusquedaIndividual";
@@ -14,19 +15,39 @@ export default function Dashboard({ onHandleIsLogged }) {
   //Acceso al token y usuarioid desde el sessionStorage
   const token = sessionStorage.getItem("token");
 
-  //Obtener y parsear los datos del usuario desde sessionStorage
-  const usuarioData = sessionStorage.getItem("usuario") || "{}";
-  let usuario;
-  //Manejo de error en caso de que el JSON esté mal formado
-  try {
-    usuario = JSON.parse(usuarioData);
-  } catch {
-    usuario = null;
-  }
+  //Estado del usuario
+  const [currentUser, setCurrentUser] = useState(() => {
+        const usuarioData = sessionStorage.getItem("usuario") || "{}";
+        if (usuarioData) {
+            try {
+                return JSON.parse(usuarioData);
+            } catch {
+                return null;
+            }
+        }
+        return null;
+    });
+
+
+//Funcion de recarga del dashboard
+    const handleUserUpdate = useCallback(() => {
+        console.log("Actualizando estado de usuario en Dashboard...");
+        const usuarioData = sessionStorage.getItem("usuario");
+        if (usuarioData) {
+            try {
+                setCurrentUser(JSON.parse(usuarioData));
+            } catch (e) {
+                console.error("Error al parsear usuario de sessionStorage:", e);
+                setCurrentUser(null);
+            }
+        } else {
+            setCurrentUser(null);
+        }
+    }, []); // El useCallback asegura que la función sea estable
 
   //Obtener el id del usuario si existe y es un objeto
-  const id = usuario && typeof usuario === "object" ? usuario.id : null;
-  const foto = usuario && typeof usuario === "object" ? usuario.foto : null;
+  const id = currentUser?.id || null;
+  const foto = currentUser?.foto || null;
 
   //Funcion para cambiar la pestaña activa
   function handleTabChange(tab) {
@@ -48,7 +69,7 @@ export default function Dashboard({ onHandleIsLogged }) {
       <header className="flex justify-between items-center mb-6">
         <div className="auto">
           <h1 className="text-2xl font-bold">Panel de control</h1>
-          {usuario &&(<TarjetaDeUsuario id={id} nombre={usuario.nombre} correo={usuario.correo} foto={foto}></TarjetaDeUsuario>)}
+          {currentUser &&(<TarjetaDeUsuario id={id} nombre={currentUser.nombre} correo={currentUser.correo} foto={foto}></TarjetaDeUsuario>)}
         </div>
         <div>
           <OButton handleClick={onHandleIsLogged} ButtonType={"cancelar"}>Cerrar sesión</OButton>
@@ -69,6 +90,7 @@ export default function Dashboard({ onHandleIsLogged }) {
             id={id}
             onChangeTab={handleTabChange}
             token={token}
+            onUserUpdate={handleUserUpdate}
           />
         )}
         {activeTab === "busqueda" && <BusquedaIndividual token={token} />}

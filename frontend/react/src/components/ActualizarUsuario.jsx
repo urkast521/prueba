@@ -3,8 +3,10 @@ import PassInput from "./subcomponentes/PasswordInput";
 import OButton from "./subcomponentes/Button";
 import {validarCorreo, validarInput, validarPassword} from "../Utilities/validaciones"
 import ConfirmationWindow from "./subcomponentes/WindowConfirm";
+import {LoadingOutlined} from '@ant-design/icons'
 
-export default function ActualizarUsuario({ id, onChangeTab, token }) {
+
+export default function ActualizarUsuario({ id, onChangeTab, token, onUserUpdate }) {
   //Estados para manejar el usuario, carga, error, mensaje y visibilidad de la contraseña
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,11 +16,15 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
   const [confirmarPass, setConfirmarPass]= useState(null);
   const [abierto, setAbierto] = useState(false);
   const [userFile, setUserFile] = useState(null);
+  const [fileExtension, setFileExtension] = useState(null);
 
   //Handler del Fichero
   function handleFile(e){
     if(e.target.files.length > 0){
       setUserFile(e.target.files[0])
+      const fileNameParts = e.target.files[0].name.split('.');
+      const ext = fileNameParts.length > 1 ? fileNameParts.pop().toLowerCase() : null;
+      setFileExtension(ext);
     }else{
       setUserFile(null);
     }
@@ -88,10 +94,20 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         const data = await res.json();
         if (data.success) {
           setMensaje("Usuario actualizado con éxito");
+          //Datos actualizados en el Dashboard
+          const oldUsuario = JSON.parse(sessionStorage.getItem("usuario"));
+          const newUsuario = { 
+              ...oldUsuario, 
+              nombre: usuario.nombre,
+              correo: usuario.correo,
+              foto: `profile_${id}.${fileExtension}`
+          };
+          sessionStorage.setItem("usuario", JSON.stringify(newUsuario));
+          onUserUpdate()
           //regresar a la pestaña de consulta general después de actualizar
           setTimeout(() => {
             onChangeTab("consulta");
-          }, 1500);
+          }, 500);
           
         } else setMensaje(`Error: ${data.error}`);
       } catch (err) {
@@ -130,10 +146,30 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         const data = await res.json();
         if (data.success) {
           setMensaje("Usuario actualizado con éxito");
+          if(userFile){
+            const oldUsuario = JSON.parse(sessionStorage.getItem("usuario"));
+            const newUsuario = { 
+                ...oldUsuario, 
+                nombre: usuario.nombre,
+                correo: usuario.correo,
+                foto: `profile_${id}.${fileExtension}`
+            };
+            sessionStorage.setItem("usuario", JSON.stringify(newUsuario));
+            onUserUpdate()
+          }else{
+            const oldUsuario = JSON.parse(sessionStorage.getItem("usuario"));
+            const newUsuario = { 
+                ...oldUsuario, 
+                nombre: usuario.nombre,
+                correo: usuario.correo,
+            };
+            sessionStorage.setItem("usuario", JSON.stringify(newUsuario));
+            onUserUpdate()
+          }
           //regresar a la pestaña de consulta general después de actualizar
           setTimeout(() => {
             onChangeTab("consulta");
-          }, 1500);
+          }, 500);
           
         } else setMensaje(`Error: ${data.error}`);
       } catch (err) {
@@ -156,10 +192,18 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
         const data = await res.json();
         if (data.success) {
           setMensaje("Usuario actualizado con éxito");
+          const oldUsuario = JSON.parse(sessionStorage.getItem("usuario"));
+          const newUsuario = { 
+              ...oldUsuario, 
+              nombre: usuario.nombre,
+              correo: usuario.correo,
+            };
+            sessionStorage.setItem("usuario", JSON.stringify(newUsuario));
+            onUserUpdate()
           //regresar a la pestaña de consulta general después de actualizar
           setTimeout(() => {
             onChangeTab("consulta");
-          }, 1500);
+          }, 500);
           
         } else setMensaje(`Error: ${data.error}`);
       } catch (err) {
@@ -176,7 +220,14 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
   }
 
   //Mostrar estados de carga y error
-  if (loading) return <p>Cargando usuario...</p>;
+  if (loading) return (
+  <>
+  <div className="flex flex-col justify-center items-center">
+    <LoadingOutlined />
+    <p>Cargando</p>
+  </div>
+  </>
+);
   if (error) return <p className="text-red-500">{error}</p>;
   if (!usuario) return <p>No se encontró usuario</p>;
   //Renderizado del formulario
@@ -224,7 +275,13 @@ export default function ActualizarUsuario({ id, onChangeTab, token }) {
                   onSetMessage={"La siguiente acción actualizara los datos de su cuenta, ¿Esta seguro que desea continuar?"} 
                   btnPositive={"Actualizar"} 
                   btnNegative={"Cancelar"}>
-                {mensaje && <p className="mt-4">{mensaje}</p>}
+                {mensaje && 
+                <>
+                  <div className="flex flex-col justify-center items-center">
+                    <LoadingOutlined />
+                    <p>{mensaje}</p>
+                  </div>
+                  </>}
                 </ConfirmationWindow>}
       </form>
     </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import OButton from "./subcomponentes/Button";
 import ConfirmationWindow from "./subcomponentes/WindowConfirm";
+import {LoadingOutlined} from '@ant-design/icons'
 
 export default function DesactivarUsuario({ onLogout, token }) {
   //Estado para manejar la carga y mensajes
@@ -59,7 +60,13 @@ export default function DesactivarUsuario({ onLogout, token }) {
           btnPositive={"Desactivar"} 
           btnNegative={"Cancelar"}
           btnStyle={"cancelar"}>
-        {mensaje && <p className="mt-4">{mensaje}</p>}
+        {mensaje && 
+          <div className="flex flex-col justify-center items-center">
+            <LoadingOutlined />
+            <p>{mensaje}</p>
+          </div>
+        }
+
         </ConfirmationWindow>}
     </div>
   );

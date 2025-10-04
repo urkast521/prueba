@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import NormalInput from "./subcomponentes/NormalInput";
 import OButton from "./subcomponentes/Button";
+import {LoadingOutlined} from '@ant-design/icons'
+
 
 export default function BusquedaIndividual({ token }) {
   // Estados para manejar la búsqueda, resultado, error y carga
@@ -51,7 +53,12 @@ export default function BusquedaIndividual({ token }) {
         <OButton handleClick={handleBuscar}>Buscar</OButton>
       </div>
 
-      {loading && <p>Cargando...</p>}
+      {loading && <>
+        <div className="flex flex-col justify-center items-center">
+          <LoadingOutlined />
+          <p>Cargando</p>
+        </div>
+        </>}
       {error && <p className="text-red-500">{error}</p>}
 
       {usuario && (

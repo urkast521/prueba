@@ -63,7 +63,7 @@ export default function FormRegister({ onHandleIsOpen }) {
         //Para que vuelva a Login un poco despues de registrarse
         setTimeout(() => {
           onHandleIsOpen(true);
-        }, 1500);
+        }, 500);
          
       } else {
         alert("Error: " + data.error);

@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import {LoadingOutlined} from '@ant-design/icons'
 
 export default function ConsultaGeneral({ token }) {
   // Estado para almacenar usuarios, carga y errores
@@ -31,7 +32,14 @@ export default function ConsultaGeneral({ token }) {
     fetchUsuarios();
   }, []);
   //Mostrar carga, error o la tabla de usuarios
-  if (loading) return <p>Cargando usuarios...</p>;
+  if (loading) return (
+  <>
+  <div className="flex flex-col justify-center items-center">
+    <LoadingOutlined />
+    <p>Cargando</p>
+  </div>
+  </>
+);
   if (error) return <p className="text-red-500">Error: {error}</p>;
   if (usuarios.length === 0) return <p>No hay usuarios disponibles.</p>;
 
