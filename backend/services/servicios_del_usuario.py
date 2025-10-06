@@ -163,10 +163,15 @@ def login_usuario(db, datos):
     if not correo or not passw_sin_hash:
         return jsonify({"success": False, "error": "Correo y contraseña son obligatorios"}), 400
     
+
+    #Hacer el correo minusculas
+    if correo:
+        correo = correo.lower()
+
     #Validar que el correo sea un correo valido
     if not re.fullmatch(regex,correo):
         return jsonify({"success": False, "error": "Correo o contraseña erroneos"}), 400
-
+    
     #Si se proporcionan, se procede a verificar las credenciales
     try:
         #Consultar el usuario en la base de datos según el correo y la contraseña
