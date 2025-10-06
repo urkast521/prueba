@@ -250,7 +250,7 @@ export default function ActualizarUsuario({ id, onChangeTab, token, onUserUpdate
         <input
           type="email"
           value={usuario.correo}
-          onChange={(e) => setUsuario({ ...usuario, correo: e.target.value })}
+          onChange={(e) => setUsuario({ ...usuario, correo: e.target.value})}
           className="w-full p-2 border rounded mb-4"
         />
         <label className="block mb-2 font-semibold">Foto de perfil</label>

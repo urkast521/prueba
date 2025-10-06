@@ -28,6 +28,8 @@ export default function FormRegister({ onHandleIsOpen }) {
     if (!(validarCorreo(correo))){
       setError("Error: Correo invalido")
       console.error("Error: Correo invalido");
+      const correoLimpio = correo ? correo.toLowerCase() : '';
+      setCorreo(correoLimpio)
       return;
     }
 

@@ -21,14 +21,17 @@ def insertar_usuario(db, datos):
     #Validar que el correo sea un correo valido
     if not re.fullmatch(regex,datos['correo']):
         return jsonify({"success": False, "error": "Correo o contraseña erroneos"}), 400
+    
+    #Hacer el correo minusculas
+    datos['correo'] = datos['correo'].lower()
         
-    # hashear la contraseña ingresada
+    #hashear la contraseña ingresada
     hashed_password = hash_password(datos['passw'])
 
-    # sustituir el valor de passw por el valor hasheado
+    #sustituir el valor de passw por el valor hasheado
     datos['passw']= hashed_password
 
-    # Si todas las validaciones pasan, se procede a insertar el usuario
+    #Si todas las validaciones pasan, se procede a insertar el usuario
     try:
         query = text("""
             INSERT INTO usuarios (nombre, correo, passw, estado)
@@ -54,7 +57,7 @@ def insertar_usuario(db, datos):
 def consultar_usuarios(db, params=None):
     try:
 
-        # Si se proporciona un nombre o id, busca por nombre o id, si no, devuelve todos
+        #Si se proporciona un nombre o id, busca por nombre o id, si no, devuelve todos
         if params:
             if 'id' in params:
                 query = text("SELECT id, nombre, correo, estado FROM usuarios WHERE id = :id")
@@ -88,9 +91,14 @@ def modificar_usuario(db, id, datos):
     if not datos:
         return jsonify({"success": False, "error": "No se proporcionaron datos para actualizar"}), 400
     
+    if 'correo' in datos:
+        datos['correo'] = datos['correo'].lower()
+    
     #Validar que el correo sea un correo valido
     if not re.fullmatch(regex,datos['correo']):
         return jsonify({"success": False, "error": "Correo o contraseña erroneos"}), 400
+    
+
     
     try:
     #Construir la consulta de actualización dinámicamente
