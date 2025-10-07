@@ -5,7 +5,6 @@ Flask-JWT-Extended
 python-dotenv
 Flask-Cors
 SQLAlchemy
-bcrypt
 
 
 
